@@ -125,8 +125,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _wrapRegExp(re, groups) { _wrapRegExp = function _wrapRegExp(re, groups) { return new BabelRegExp(re, undefined, groups); }; var _RegExp = _wrapNativeSuper(RegExp); var _super = RegExp.prototype; var _groups = new WeakMap(); function BabelRegExp(re, flags, groups) { var _this = _RegExp.call(this, re, flags); _groups.set(_this, groups || _groups.get(re)); return _this; } _inherits(BabelRegExp, _RegExp); BabelRegExp.prototype.exec = function (str) { var result = _super.exec.call(this, str); if (result) result.groups = buildGroups(result, this); return result; }; BabelRegExp.prototype[Symbol.replace] = function (str, substitution) { if (typeof substitution === "string") { var groups = _groups.get(this); return _super[Symbol.replace].call(this, str, substitution.replace(/\$<([^>]+)>/g, function (_, name) { return "$" + groups[name]; })); } else if (typeof substitution === "function") { var _this = this; return _super[Symbol.replace].call(this, str, function () { var args = []; args.push.apply(args, arguments); if (_typeof(args[args.length - 1]) !== "object") { args.push(buildGroups(args, _this)); } return substitution.apply(this, args); }); } else { return _super[Symbol.replace].call(this, str, substitution); } }; function buildGroups(result, re) { var g = _groups.get(re); return Object.keys(g).reduce(function (groups, name) { groups[name] = result[g[name]]; return groups; }, Object.create(null)); } return _wrapRegExp.apply(this, arguments); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
@@ -146,6 +144,8 @@ function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[nat
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -179,6 +179,16 @@ var MtgCard = /*#__PURE__*/function () {
     key: "parseImport",
     value: function parseImport(input) {
       if (!input) {
+        return;
+      }
+
+      if (_typeof(input) === 'object' && input !== null) {
+        if (input.raw) this.raw = input.raw;
+        if (input.quantity) this.quantity = input.quantity;
+        if (input.name) this.name = input.name;
+        if (input.set) this.set = input.set;
+        if (input.setNumber) this.setNumber = input.setNumber;
+        if (input.lookup) this.lookup = input.lookup;
         return;
       }
 
@@ -237,6 +247,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -248,6 +260,7 @@ var MtgDeck = /*#__PURE__*/function () {
   	Commander;
   	Deck = [];
   	Sideboard = [];
+  	fetched; // whether the data has already been fetched.
   */
   function MtgDeck() {
     var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
@@ -256,6 +269,7 @@ var MtgDeck = /*#__PURE__*/function () {
 
     this.Deck = [];
     this.Sideboard = [];
+    this.fetched = false;
 
     if (input) {
       this.parseImport(input);
@@ -265,7 +279,37 @@ var MtgDeck = /*#__PURE__*/function () {
   _createClass(MtgDeck, [{
     key: "parseImport",
     value: function parseImport(input) {
-      if (!Array.isArray(input)) {
+      if (_typeof(input) === 'object' && input !== null) {
+        if (input.Companion) {
+          this.Companion = new _MtgCard.default(input.Companion);
+        }
+
+        if (input.Commander) {
+          this.Commander = new _MtgCard.default(input.Commander);
+        }
+
+        if (input.Deck) {
+          this.Deck = input.Deck;
+          this.Deck.forEach(function (card, index) {
+            this.Deck[index] = new _MtgCard.default(card);
+          }, this);
+        }
+
+        if (input.Sideboard) {
+          this.Sideboard = input.Sideboard;
+          this.Sideboard.forEach(function (card, index) {
+            this.Sideboard[index] = new _MtgCard.default(card);
+          }, this);
+        }
+
+        if (input.fetched) {
+          this.fetched = input.fetched;
+        }
+
+        return this;
+      }
+
+      if (typeof input === 'string' || input instanceof String) {
         input = input.split('\n');
       }
 
@@ -285,20 +329,36 @@ var MtgDeck = /*#__PURE__*/function () {
           }
         }
       }, this);
+      this.getScryfallData();
+    }
+  }, {
+    key: "findCardFromResult",
+    value: function findCardFromResult(data, matchParams) {
+      var found = data.find(function (card) {
+        return card.collector_number === matchParams.collector_number && card.set.toUpperCase() === matchParams.set.toUpperCase();
+      });
+      return found;
     }
   }, {
     key: "getScryfallData",
     value: function () {
       var _getScryfallData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-        var _this = this;
-
-        var allCards, lookupData, rawResponse, scryfallData, foundCards, cardData;
+        var setAttributesCallback,
+            allCards,
+            lookupData,
+            rawResponse,
+            scryfallData,
+            foundCards,
+            cardData,
+            _args = arguments;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                // Make one big array of all involved cards.
-                allCards = this.Deck.concat(this.Sideboard, this.Commander, this.Companion); // Map the data into strings so we can properly sort out unique lookups.
+                setAttributesCallback = _args.length > 0 && _args[0] !== undefined ? _args[0] : null;
+                this.fetched = 'working'; // Make one big array of all involved cards.
+
+                allCards = this.Deck.concat(this.Sideboard, this.Commander, this.Companion).filter(Boolean); // Map the data into strings so we can properly sort out unique lookups.
 
                 lookupData = allCards.map(function (card) {
                   return card.set + '|' + card.setNumber;
@@ -310,10 +370,9 @@ var MtgDeck = /*#__PURE__*/function () {
                     set: card.substring(0, card.indexOf('|')),
                     collector_number: card.substring(1 + card.indexOf('|'))
                   };
-                }); // console.log( lookupData );
-                // Remember, Scryfall maxes out at 75 cards searched for!
+                }); // Remember, Scryfall maxes out at 75 cards searched for!
 
-                _context.next = 6;
+                _context.next = 8;
                 return fetch('https://api.scryfall.com/cards/collection', {
                   method: 'POST',
                   headers: {
@@ -325,42 +384,59 @@ var MtgDeck = /*#__PURE__*/function () {
                   })
                 });
 
-              case 6:
+              case 8:
                 rawResponse = _context.sent;
-                _context.next = 9;
+                _context.next = 11;
                 return rawResponse.json();
 
-              case 9:
+              case 11:
                 scryfallData = _context.sent;
-                console.log(scryfallData);
-                foundCards = scryfallData.data;
-                console.log(foundCards); // Reuse a var as we fly through?
+                foundCards = scryfallData.data; // Reuse a var as we fly through?
 
-                // Loop through
-                if (this.Companion) {
-                  cardData = foundCards.find(function (card) {
-                    card.collector_number === _this.Companion.setNumber && card.set.toUpperCase() === _this.Companion.set.toUpperCase();
+                // Loop through\
+                if (this.Commander) {
+                  this.Commander.lookup = this.findCardFromResult(foundCards, {
+                    set: this.Commander.set,
+                    collector_number: this.Commander.setNumber
                   });
-
-                  if (cardData) {
-                    this.Companion.lookup = cardData;
-                  }
                 }
 
-                if (this.Commander) {
-                  cardData = foundCards.find(function (card) {
-                    card.collector_number === _this.Commander.setNumber && card.set.toUpperCase() === _this.Commander.set.toUpperCase();
+                if (this.Companion) {
+                  this.Companion.lookup = this.findCardFromResult(foundCards, {
+                    set: this.Companion.set,
+                    collector_number: this.Companion.setNumber
                   });
+                }
 
-                  if (cardData) {
-                    this.Commander.lookup = cardData;
-                  }
-                } // Show something to verify.
+                if (this.Deck.length) {
+                  this.Deck = this.Deck.map(function (card) {
+                    card.lookup = this.findCardFromResult(foundCards, {
+                      set: card.set,
+                      collector_number: card.setNumber
+                    });
+                    return card;
+                  }, this);
+                }
 
+                if (this.Sideboard.length) {
+                  this.Sideboard = this.Sideboard.map(function (card) {
+                    card.lookup = this.findCardFromResult(foundCards, {
+                      set: card.set,
+                      collector_number: card.setNumber
+                    });
+                    return card;
+                  }, this);
+                }
 
-                console.log(this);
+                if (setAttributesCallback) {
+                  setAttributesCallback({
+                    deck: this
+                  });
+                }
 
-              case 16:
+                this.fetched = 'done';
+
+              case 19:
               case "end":
                 return _context.stop();
             }
@@ -422,6 +498,15 @@ exports.default = void 0;
 
 function CardLink(_ref) {
   var card = _ref.card;
+
+  if (card.lookup && card.lookup.related_uris) {
+    return /*#__PURE__*/React.createElement("a", {
+      href: card.lookup.related_uris.gatherer
+    }, card.name, " ", /*#__PURE__*/React.createElement("span", {
+      className: "mana-cost"
+    }, card.lookup.mana_cost));
+  }
+
   return /*#__PURE__*/React.createElement("a", {
     href: "#"
   }, card.name);
@@ -467,15 +552,81 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Fragment = wp.element.Fragment;
 var __ = wp.i18n.__;
 
+function whatTheType(type_line) {
+  if (type_line.includes('Creature')) {
+    return __('Creature', 'mtg-blocks');
+  }
+
+  if (type_line.includes('Planeswalker')) {
+    return __('Planeswalker', 'mtg-blocks');
+  }
+
+  if (type_line.includes('Land')) {
+    return __('Land', 'mtg-blocks');
+  }
+
+  if (type_line.includes('Instant')) {
+    return __('Instant', 'mtg-blocks');
+  }
+
+  if (type_line.includes('Sorcery')) {
+    return __('Sorcery', 'mtg-blocks');
+  }
+
+  if (type_line.includes('Artifact')) {
+    return __('Artifact', 'mtg-blocks');
+  }
+
+  if (type_line.includes('Enchantment')) {
+    return __('Enchantment', 'mtg-blocks');
+  }
+
+  return __('Unknown', 'mtg-blocks');
+}
+
+function clusterDeckByType(Deck) {
+  var init = {};
+  init[__('Creature', 'mtg-blocks')] = [];
+  init[__('Planeswalker', 'mtg-blocks')] = [];
+  init[__('Instant', 'mtg-blocks')] = [];
+  init[__('Sorcery', 'mtg-blocks')] = [];
+  init[__('Artifact', 'mtg-blocks')] = [];
+  init[__('Enchantment', 'mtg-blocks')] = [];
+  init[__('Land', 'mtg-blocks')] = [];
+  init[__('Unknown', 'mtg-blocks')] = [];
+  var clusteredDeck = Deck.reduce(function (obj, card) {
+    var type = whatTheType(card.lookup.type_line);
+    obj[type].push(card);
+    return obj;
+  }, init);
+  return clusteredDeck;
+}
+
 function DeckList(_ref) {
   var deck = _ref.deck;
+  var clustered;
+
+  if ('done' === deck.fetched) {
+    clustered = clusterDeckByType(deck.Deck);
+  }
+
   return /*#__PURE__*/React.createElement("div", {
     className: "mtg-deck-list"
   }, deck.Commander && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Commander:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
     card: deck.Commander
   })), deck.Companion && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Companion:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
     card: deck.Companion
-  })), deck.Deck.length && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Deck:', 'mtg-blocks')), /*#__PURE__*/React.createElement("ul", null, deck.Deck.map(function (card) {
+  })), deck.Deck.length && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Deck:', 'mtg-blocks')), clustered ? Object.entries(clustered).map(function (chunk) {
+    if (!chunk[1].length) return;
+    return /*#__PURE__*/React.createElement(Fragment, {
+      key: chunk[0]
+    }, /*#__PURE__*/React.createElement("h4", null, chunk[0]), /*#__PURE__*/React.createElement("ul", null, chunk[1].map(function (card) {
+      return /*#__PURE__*/React.createElement(_DeckCard.default, {
+        key: card.raw,
+        card: card
+      });
+    })));
+  }) : /*#__PURE__*/React.createElement("ul", null, deck.Deck.map(function (card) {
     return /*#__PURE__*/React.createElement(_DeckCard.default, {
       key: card.raw,
       card: card
@@ -507,6 +658,7 @@ var registerBlockType = wp.blocks.registerBlockType;
 var InspectorControls = wp.blockEditor.InspectorControls;
 var _wp$components = wp.components,
     Button = _wp$components.Button,
+    ButtonGroup = _wp$components.ButtonGroup,
     PanelBody = _wp$components.PanelBody,
     TextareaControl = _wp$components.TextareaControl;
 var Fragment = wp.element.Fragment;
@@ -541,13 +693,22 @@ registerBlockType('magic-blocks/deck', {
         raw: '',
         deck: null
       });
-    };
+    }; // If the deck is just an object, but not a MtgDeck object, reinitialize it to be one.
+
+
+    if (props.attributes.deck && !props.attributes.deck.getScryfallData) {
+      props.setAttributes({
+        deck: new _MtgDeck.default(props.attributes.deck)
+      });
+    }
 
     if (props.attributes.deck && props.attributes.deck.getScryfallData) {
-      console.log(JSON.stringify(props.attributes.deck.getScryfallData()));
-    } else {
-      console.log('props.attributes.deck.getScryfallData not found!');
-    }
+      if (!props.attributes.deck.fetched) {
+        props.attributes.deck.getScryfallData(props.setAttributes);
+      } else {//	console.log( 'Scryfall data already loaded!' );
+      }
+    } else {//	console.log( 'props.attributes.deck.getScryfallData not found!' );
+      }
 
     return /*#__PURE__*/React.createElement(Fragment, null, props.attributes.deck ? /*#__PURE__*/React.createElement(_DeckList.default, {
       deck: props.attributes.deck
@@ -566,12 +727,19 @@ registerBlockType('magic-blocks/deck', {
       }
     }, __('Process Import →', 'mtg-blocks'))), /*#__PURE__*/React.createElement(InspectorControls, null, /*#__PURE__*/React.createElement(PanelBody, {
       title: __('Deck Settings', 'mtg-blocks')
-    }, /*#__PURE__*/React.createElement(Button, {
+    }, /*#__PURE__*/React.createElement(ButtonGroup, null, /*#__PURE__*/React.createElement(Button, {
       isPrimary: !!props.attributes.deck,
       disabled: !props.attributes.deck,
       isLarge: true,
       onClick: clearDeck
-    }, __('Reset Deck', 'mtg-blocks')))));
+    }, __('Reset Deck', 'mtg-blocks')), /*#__PURE__*/React.createElement(Button, {
+      isSecondary: true,
+      disabled: !props.attributes.deck,
+      isLarge: true,
+      onClick: function onClick(e) {
+        return props.attributes.deck.getScryfallData();
+      }
+    }, __('Reload Card Data', 'mtg-blocks'))))));
   },
   save: function save(props) {
     return /*#__PURE__*/React.createElement("div", {

@@ -24,6 +24,16 @@ class MtgCard {
 			return;
 		}
 
+		if ( typeof input === 'object' && input !== null ) {
+			if ( input.raw )       this.raw       = input.raw;
+			if ( input.quantity )  this.quantity  = input.quantity;
+			if ( input.name )      this.name      = input.name;
+			if ( input.set )       this.set       = input.set;
+			if ( input.setNumber ) this.setNumber = input.setNumber;
+			if ( input.lookup )    this.lookup    = input.lookup;
+			return;
+		}
+
 		this.raw = input;
 
 		const matches = input.match( /^(?<quantity>\d+) (?<name>.+) \((?<set>[\da-zA-Z]{3})\) (?<setNumber>\d+)$/ );

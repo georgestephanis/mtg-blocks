@@ -8,6 +8,7 @@ const {
 
 const {
 	Button,
+	ButtonGroup,
 	PanelBody,
 	TextareaControl
 } = wp.components;
@@ -48,19 +49,28 @@ registerBlockType( 'magic-blocks/deck', {
 
 	edit: function( props ) {
 		const parseRaw = function( event ) {
-			props.setAttributes( { deck: new MtgDeck( props.attributes.raw ) } );
-		},
-		clearDeck = function() {
-			props.setAttributes({
-				raw : '',
-				deck : null,
-			});
-		};
+				props.setAttributes( { deck: new MtgDeck( props.attributes.raw ) } );
+			},
+			clearDeck = function() {
+				props.setAttributes({
+					raw : '',
+					deck : null,
+				});
+			};
+
+		// If the deck is just an object, but not a MtgDeck object, reinitialize it to be one.
+		if ( props.attributes.deck && ! props.attributes.deck.getScryfallData ) {
+			props.setAttributes( { deck: new MtgDeck( props.attributes.deck ) } );
+		}
 
 		if ( props.attributes.deck && props.attributes.deck.getScryfallData ) {
-			console.log( JSON.stringify( props.attributes.deck.getScryfallData() ) );
+			if ( ! props.attributes.deck.fetched ) {
+				props.attributes.deck.getScryfallData( props.setAttributes );
+			} else {
+			//	console.log( 'Scryfall data already loaded!' );
+			}
 		} else {
-			console.log( 'props.attributes.deck.getScryfallData not found!' );
+		//	console.log( 'props.attributes.deck.getScryfallData not found!' );
 		}
 
 		return (
@@ -81,9 +91,14 @@ registerBlockType( 'magic-blocks/deck', {
 				) }
 				<InspectorControls>
 					<PanelBody title={ __( 'Deck Settings', 'mtg-blocks' ) }>
-						<Button isPrimary={ !! props.attributes.deck } disabled={ ! props.attributes.deck } isLarge={true} onClick={ clearDeck }>
-							{ __( 'Reset Deck', 'mtg-blocks' ) }
-						</Button>
+						<ButtonGroup>
+							<Button isPrimary={ !! props.attributes.deck } disabled={ ! props.attributes.deck } isLarge={true} onClick={ clearDeck }>
+								{ __( 'Reset Deck', 'mtg-blocks' ) }
+							</Button>
+							<Button isSecondary disabled={ ! props.attributes.deck } isLarge={true} onClick={ e => props.attributes.deck.getScryfallData() }>
+								{ __( 'Reload Card Data', 'mtg-blocks' ) }
+							</Button>
+						</ButtonGroup>
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>

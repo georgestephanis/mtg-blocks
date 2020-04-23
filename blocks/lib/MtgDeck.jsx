@@ -6,10 +6,13 @@ class MtgDeck {
 	Commander;
 	Deck = [];
 	Sideboard = [];
+	fetched; // whether the data has already been fetched.
 */
 	constructor( input = false ) {
 		this.Deck = [];
 		this.Sideboard = [];
+
+		this.fetched = false;
 
 		if ( input ) {
 			this.parseImport( input );
@@ -17,7 +20,37 @@ class MtgDeck {
 	}
 
 	parseImport( input ) {
-		if ( ! Array.isArray( input ) ) {
+		if ( typeof input === 'object' && input !== null ) {
+			if ( input.Companion ) {
+				this.Companion = new MtgCard( input.Companion );
+			}
+
+			if ( input.Commander ) {
+				this.Commander = new MtgCard( input.Commander );
+			}
+
+			if ( input.Deck ) {
+				this.Deck = input.Deck;
+				this.Deck.forEach( function( card, index ) {
+					this.Deck[ index ] = new MtgCard( card );
+				}, this );
+			}
+
+			if ( input.Sideboard ) {
+				this.Sideboard = input.Sideboard;
+				this.Sideboard.forEach( function( card, index ) {
+					this.Sideboard[ index ] = new MtgCard( card );
+				}, this );
+			}
+
+			if ( input.fetched ) {
+				this.fetched = input.fetched;
+			}
+
+			return this;
+		}
+
+		if ( typeof input === 'string' || input instanceof String ) {
 			input = input.split('\n');
 		}
 
@@ -38,11 +71,23 @@ class MtgDeck {
 				}
 			}
 		}, this );
+
+		this.getScryfallData();
 	}
 
-	async getScryfallData() {
+	findCardFromResult( data, matchParams ) {
+		let found = data.find( function( card ) {
+			return card.collector_number === matchParams.collector_number && card.set.toUpperCase() === matchParams.set.toUpperCase();
+		} );
+
+		return found;
+	}
+
+	async getScryfallData( setAttributesCallback = null ) {
+		this.fetched = 'working';
+
 		// Make one big array of all involved cards.
-		const allCards = this.Deck.concat( this.Sideboard, this.Commander, this.Companion );
+		const allCards = this.Deck.concat( this.Sideboard, this.Commander, this.Companion ).filter(Boolean);
 
 		// Map the data into strings so we can properly sort out unique lookups.
 		let lookupData = allCards.map( card => card.set + '|' + card.setNumber );
@@ -55,8 +100,6 @@ class MtgDeck {
 			collector_number: card.substring( 1 + card.indexOf( '|' ) ),
 		}))
 
-		// console.log( lookupData );
-
 		// Remember, Scryfall maxes out at 75 cards searched for!
 		const rawResponse = await fetch('https://api.scryfall.com/cards/collection', {
 			method: 'POST',
@@ -68,32 +111,39 @@ class MtgDeck {
 		});
 		const scryfallData = await rawResponse.json();
 
-		console.log( scryfallData );
-
 		const foundCards = scryfallData.data;
-
-		console.log( foundCards );
 
 		// Reuse a var as we fly through?
 		let cardData;
 
-		// Loop through
-		if ( this.Companion ) {
-			cardData = foundCards.find( card => { card.collector_number === this.Companion.setNumber && card.set.toUpperCase() === this.Companion.set.toUpperCase() } );
-			if ( cardData ) {
-				this.Companion.lookup = cardData;
-			}
-		}
-
+		// Loop through\
 		if ( this.Commander ) {
-			cardData = foundCards.find( card => { card.collector_number === this.Commander.setNumber && card.set.toUpperCase() === this.Commander.set.toUpperCase() } );
-			if ( cardData ) {
-				this.Commander.lookup = cardData;
-			}
+			this.Commander.lookup = this.findCardFromResult( foundCards, { set: this.Commander.set, collector_number: this.Commander.setNumber } );
 		}
 
-		// Show something to verify.
-		console.log( this );
+		if ( this.Companion ) {
+			this.Companion.lookup = this.findCardFromResult( foundCards, { set: this.Companion.set, collector_number: this.Companion.setNumber } );
+		}
+
+		if ( this.Deck.length ) {
+			this.Deck = this.Deck.map( function( card ) {
+				card.lookup = this.findCardFromResult( foundCards, { set: card.set, collector_number: card.setNumber } );
+				return card;
+			}, this );
+		}
+
+		if ( this.Sideboard.length ) {
+			this.Sideboard = this.Sideboard.map( function( card ) {
+				card.lookup = this.findCardFromResult( foundCards, { set: card.set, collector_number: card.setNumber } );
+				return card;
+			}, this );
+		}
+
+		if ( setAttributesCallback ) {
+			setAttributesCallback( { deck: this } );
+		}
+
+		this.fetched = 'done';
 	}
 
 	get arena() {

@@ -159,6 +159,7 @@ var MtgCard = /*#__PURE__*/function () {
   	name = '';
   	set = '';
   	setNumber = 0;
+  	lookup = {};
   */
   function MtgCard() {
     var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -170,6 +171,7 @@ var MtgCard = /*#__PURE__*/function () {
     this.name = '';
     this.set = '';
     this.setNumber = '';
+    this.lookup = {};
     this.parseImport(input);
   }
 
@@ -218,6 +220,22 @@ exports.default = void 0;
 var _MtgCard = _interopRequireDefault(require("./MtgCard"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -268,6 +286,94 @@ var MtgDeck = /*#__PURE__*/function () {
         }
       }, this);
     }
+  }, {
+    key: "getScryfallData",
+    value: function () {
+      var _getScryfallData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var _this = this;
+
+        var allCards, lookupData, rawResponse, scryfallData, foundCards, cardData;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                // Make one big array of all involved cards.
+                allCards = this.Deck.concat(this.Sideboard, this.Commander, this.Companion); // Map the data into strings so we can properly sort out unique lookups.
+
+                lookupData = allCards.map(function (card) {
+                  return card.set + '|' + card.setNumber;
+                }); // Filter out duplicates and sort!
+
+                lookupData = _toConsumableArray(new Set(lookupData)).sort();
+                lookupData = lookupData.map(function (card) {
+                  return {
+                    set: card.substring(0, card.indexOf('|')),
+                    collector_number: card.substring(1 + card.indexOf('|'))
+                  };
+                }); // console.log( lookupData );
+                // Remember, Scryfall maxes out at 75 cards searched for!
+
+                _context.next = 6;
+                return fetch('https://api.scryfall.com/cards/collection', {
+                  method: 'POST',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    identifiers: lookupData
+                  })
+                });
+
+              case 6:
+                rawResponse = _context.sent;
+                _context.next = 9;
+                return rawResponse.json();
+
+              case 9:
+                scryfallData = _context.sent;
+                console.log(scryfallData);
+                foundCards = scryfallData.data;
+                console.log(foundCards); // Reuse a var as we fly through?
+
+                // Loop through
+                if (this.Companion) {
+                  cardData = foundCards.find(function (card) {
+                    card.collector_number === _this.Companion.setNumber && card.set.toUpperCase() === _this.Companion.set.toUpperCase();
+                  });
+
+                  if (cardData) {
+                    this.Companion.lookup = cardData;
+                  }
+                }
+
+                if (this.Commander) {
+                  cardData = foundCards.find(function (card) {
+                    card.collector_number === _this.Commander.setNumber && card.set.toUpperCase() === _this.Commander.set.toUpperCase();
+                  });
+
+                  if (cardData) {
+                    this.Commander.lookup = cardData;
+                  }
+                } // Show something to verify.
+
+
+                console.log(this);
+
+              case 16:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getScryfallData() {
+        return _getScryfallData.apply(this, arguments);
+      }
+
+      return getScryfallData;
+    }()
   }, {
     key: "arena",
     get: function get() {
@@ -436,6 +542,12 @@ registerBlockType('magic-blocks/deck', {
         deck: null
       });
     };
+
+    if (props.attributes.deck && props.attributes.deck.getScryfallData) {
+      console.log(JSON.stringify(props.attributes.deck.getScryfallData()));
+    } else {
+      console.log('props.attributes.deck.getScryfallData not found!');
+    }
 
     return /*#__PURE__*/React.createElement(Fragment, null, props.attributes.deck ? /*#__PURE__*/React.createElement(_DeckList.default, {
       deck: props.attributes.deck

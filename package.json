@@ -1,0 +1,11 @@
+{
+  "name": "mtg-blocks",
+  "scripts": {
+    "build": "parcel build blocks/deck.jsx --out-dir blocks --public-url .",
+    "watch": "parcel watch blocks/deck.jsx --out-dir blocks --public-url . --no-hmr"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.10.1",
+    "sass": "^1.15.1"
+  }
+}

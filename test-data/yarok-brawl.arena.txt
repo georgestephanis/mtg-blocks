@@ -1,0 +1,60 @@
+Commander
+1 Yarok, the Desecrated (M20) 220
+
+Deck
+1 Agent of Treachery (M20) 43
+1 Arcane Signet (ELD) 331
+1 Assassin's Trophy (GRN) 152
+1 Bake into a Pie (ELD) 76
+1 Breeding Pool (RNA) 246
+1 Castle Locthwain (ELD) 241
+1 Castle Vantress (ELD) 242
+1 Cauldron Familiar (ELD) 81
+1 Cavalier of Night (M20) 94
+1 Cavalier of Thorns (M20) 167
+1 Chromatic Lantern (GRN) 233
+1 Command the Dreadhorde (WAR) 82
+1 Dimir Guildgate (GRN) 246
+1 Dismal Backwater (M20) 245
+1 District Guide (GRN) 128
+1 Fabled Passage (ELD) 244
+1 Fblthp, the Lost (WAR) 50
+1 Feasting Troll King (ELD) 152
+1 Field of the Dead (M20) 247
+1 Gilded Goose (ELD) 160
+1 Gingerbread Cabin (ELD) 245
+1 Gadwick, the Wizened (ELD) 48
+1 Golden Egg (ELD) 220
+1 Golgari Findbroker (GRN) 175
+1 Golgari Guildgate (GRN) 249
+1 Gravedigger (M19) 98
+1 Hydroid Krasis (RNA) 183
+1 Jungle Hollow (M20) 248
+1 Thassa, Deep-Dwelling (THB) 71
+1 Meteor Golem (M19) 241
+1 Murderous Rider (ELD) 97
+1 Overgrown Tomb (GRN) 253
+1 Paradise Druid (WAR) 171
+1 Plaza of Harmony (RNA) 254
+1 Risen Reef (M20) 217
+1 Savvy Hunter (ELD) 200
+1 Simic Guildgate (RNA) 257
+1 Spark Double (WAR) 68
+1 Tamiyo, Collector of Tales (WAR) 220
+1 Temple of Malady (M20) 254
+1 Temple of Mystery (M20) 255
+1 Tempting Witch (ELD) 108
+1 The Great Henge (ELD) 161
+1 Thornwood Falls (M20) 258
+1 Tomebound Lich (M20) 219
+1 Trail of Crumbs (ELD) 179
+1 Voracious Hydra (M20) 200
+1 Vraska, Golgari Queen (GRN) 213
+1 Watery Grave (GRN) 259
+1 Wicked Wolf (ELD) 181
+1 Witch's Cottage (ELD) 249
+1 Witch's Oven (ELD) 237
+1 Yarok's Fenlurker (M20) 123
+3 Forest (ELD) 266
+1 Island (ELD) 254
+2 Swamp (ELD) 258

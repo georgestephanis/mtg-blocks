@@ -57,6 +57,12 @@ registerBlockType( 'magic-blocks/deck', {
 			});
 		};
 
+		if ( props.attributes.deck && props.attributes.deck.getScryfallData ) {
+			console.log( JSON.stringify( props.attributes.deck.getScryfallData() ) );
+		} else {
+			console.log( 'props.attributes.deck.getScryfallData not found!' );
+		}
+
 		return (
 			<Fragment>
 				{ props.attributes.deck ? (

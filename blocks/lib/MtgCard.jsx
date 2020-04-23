@@ -4,6 +4,7 @@ class MtgCard {
 	name = '';
 	set = '';
 	setNumber = 0;
+	lookup = {};
 */
 	constructor( input = '' ) {
 		this.raw = '';
@@ -12,6 +13,8 @@ class MtgCard {
 		this.name = '';
 		this.set = '';
 		this.setNumber = '';
+
+		this.lookup = {};
 
 		this.parseImport( input );
 	}

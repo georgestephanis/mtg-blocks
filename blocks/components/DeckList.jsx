@@ -66,47 +66,47 @@ function DeckList( { deck } ) {
 		<div className="mtg-deck-list">
 
 			{ deck.Commander && (
-				<Fragment>
+				<div className="mtg-deck-list_Commander">
 					<h3>{ __( 'Commander:', 'mtg-blocks' ) }</h3>
 					<CardLink card={ deck.Commander } />
-				</Fragment>
+				</div>
 			) }
 
 			{ deck.Companion && (
-				<Fragment>
+				<div className="mtg-deck-list_Companion">
 					<h3>{ __( 'Companion:', 'mtg-blocks' ) }</h3>
 					<CardLink card={ deck.Companion } />
-				</Fragment>
+				</div>
 			) }
 
-			{ deck.Deck.length && (
-				<Fragment>
+			{ !! deck.Deck.length && (
+				<div className="mtg-deck-list_Deck">
 					<h3>{ __( 'Deck:', 'mtg-blocks' ) }</h3>
 					{ clustered ? Object.entries( clustered ).map( function( chunk ) {
 						if ( ! chunk[1].length ) return;
 						return (
-							<Fragment key={ chunk[0] }>
+							<div className={ 'mtg-deck-list_Deck_' + chunk[0] } key={ chunk[0] }>
 								<h4>{ chunk[0] }</h4>
 								<ul>
 									{ chunk[1].map( card => ( <DeckCard key={ card.raw } card={ card } /> ) ) }
 								</ul>
-							</Fragment>
+							</div>
 						)
 					} ) : (
 					<ul>
 						{ deck.Deck.map( card => ( <DeckCard key={ card.raw } card={ card } /> ) ) }
 					</ul>
 					) }
-				</Fragment>
+				</div>
 			) }
 
-			{ deck.Sideboard.length && (
-				<Fragment>
+			{ !! deck.Sideboard.length && (
+				<div className="mtg-deck-list_Sideboard">
 					<h3>{ __( 'Sideboard:', 'mtg-blocks' ) }</h3>
 					<ul>
 						{ deck.Sideboard.map( card => ( <DeckCard key={ card.raw } card={ card } /> ) ) }
 					</ul>
-				</Fragment>
+				</div>
 			) }
 
 		</div>

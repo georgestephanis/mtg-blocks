@@ -612,13 +612,20 @@ function DeckList(_ref) {
 
   return /*#__PURE__*/React.createElement("div", {
     className: "mtg-deck-list"
-  }, deck.Commander && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Commander:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
+  }, deck.Commander && /*#__PURE__*/React.createElement("div", {
+    className: "mtg-deck-list_Commander"
+  }, /*#__PURE__*/React.createElement("h3", null, __('Commander:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
     card: deck.Commander
-  })), deck.Companion && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Companion:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
+  })), deck.Companion && /*#__PURE__*/React.createElement("div", {
+    className: "mtg-deck-list_Companion"
+  }, /*#__PURE__*/React.createElement("h3", null, __('Companion:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
     card: deck.Companion
-  })), deck.Deck.length && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Deck:', 'mtg-blocks')), clustered ? Object.entries(clustered).map(function (chunk) {
+  })), !!deck.Deck.length && /*#__PURE__*/React.createElement("div", {
+    className: "mtg-deck-list_Deck"
+  }, /*#__PURE__*/React.createElement("h3", null, __('Deck:', 'mtg-blocks')), clustered ? Object.entries(clustered).map(function (chunk) {
     if (!chunk[1].length) return;
-    return /*#__PURE__*/React.createElement(Fragment, {
+    return /*#__PURE__*/React.createElement("div", {
+      className: 'mtg-deck-list_Deck_' + chunk[0],
       key: chunk[0]
     }, /*#__PURE__*/React.createElement("h4", null, chunk[0]), /*#__PURE__*/React.createElement("ul", null, chunk[1].map(function (card) {
       return /*#__PURE__*/React.createElement(_DeckCard.default, {
@@ -631,7 +638,9 @@ function DeckList(_ref) {
       key: card.raw,
       card: card
     });
-  }))), deck.Sideboard.length && /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("h3", null, __('Sideboard:', 'mtg-blocks')), /*#__PURE__*/React.createElement("ul", null, deck.Sideboard.map(function (card) {
+  }))), !!deck.Sideboard.length && /*#__PURE__*/React.createElement("div", {
+    className: "mtg-deck-list_Sideboard"
+  }, /*#__PURE__*/React.createElement("h3", null, __('Sideboard:', 'mtg-blocks')), /*#__PURE__*/React.createElement("ul", null, deck.Sideboard.map(function (card) {
     return /*#__PURE__*/React.createElement(_DeckCard.default, {
       key: card.raw,
       card: card

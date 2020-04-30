@@ -1,5 +1,52 @@
 .mtg-blocks_deck {
-    pre {
-        display: none;
-    }
+	font-size: 1.5rem;
+
+	pre {
+		display: none;
+	}
+
+	.mtg-deck-list {
+		font-size: 1em;
+		overflow: auto;
+
+		h3,
+		h4 {
+			font-size: 1.1em;
+			margin: 0.5em 0 0;
+		}
+
+		ul {
+			list-style-type: none;
+		}
+
+		.mtg-deck-list_Commander {
+
+		}
+		.mtg-deck-list_Companion {
+
+		}
+		.mtg-deck-list_Deck {
+			float: left;
+			width: calc( 100% - 260px );
+			column-width: 240px;
+
+			h3 {
+				column-span: all;
+			}
+			> div {
+				-webkit-column-break-inside: avoid;
+				page-break-inside: avoid;
+				break-inside: avoid;
+
+				h4 {
+					font-size: 1em;
+				}
+			}
+		}
+		.mtg-deck-list_Sideboard {
+			float: right;
+			width: 260px;
+			background: rgba( 0, 0, 0, 0.2 );
+		}
+	}
 }

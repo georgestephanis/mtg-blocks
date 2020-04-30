@@ -500,11 +500,52 @@ function CardLink(_ref) {
   var card = _ref.card;
 
   if (card.lookup && card.lookup.related_uris) {
+    var manaCost = card.lookup.mana_cost; //	.replace( /\{1\}/gi, '①' )
+    //	.replace( /\{2\}/gi, '②' )
+    //	.replace( /\{3\}/gi, '③' )
+    //	.replace( /\{4\}/gi, '④' )
+    //	.replace( /\{5\}/gi, '⑤' )
+    //	.replace( /\{6\}/gi, '⑥' )
+    //	.replace( /\{7\}/gi, '⑦' )
+    //	.replace( /\{8\}/gi, '⑧' )
+    //	.replace( /\{9\}/gi, '⑨' )
+    //	.replace( /\{10\}/gi, '⑩' )
+    //	.replace( /\{11\}/gi, '⑪' )
+    //	.replace( /\{12\}/gi, '⑫' )
+    //	.replace( /\{13\}/gi, '⑬' )
+    //	.replace( /\{14\}/gi, '⑭' )
+    //	.replace( /\{15\}/gi, '⑮' )
+    //	.replace( /\{16\}/gi, '⑯' )
+    //	.replace( /\{17\}/gi, '⑰' )
+    //	.replace( /\{18\}/gi, '⑱' )
+    //	.replace( /\{19\}/gi, '⑲' )
+    //	.replace( /\{20\}/gi, '⑳' )
+    //	.replace( /\{X\}/gi, 'Ⓧ' )
+    //	.replace( /\{Y\}/gi, 'Ⓨ' )
+    //	.replace( /\{Z\}/gi, 'Ⓩ' )
+    //	.replace( /\{W\}/gi, '⚪' )
+    //	.replace( /\{U\}/gi, '🔵' )
+    //	.replace( /\{B\}/gi, '⚫' )
+    //	.replace( /\{R\}/gi, '🔴' )
+    //	.replace( /\{G\}/gi, '🟢' )
+    //	.replace( /\{C\}/gi, '🟠' )
+    //	.replace( /\{W/U\}/gi, '' ) // azorius
+    //	.replace( /\{W/B\}/gi, '' ) // orzhov
+    //	.replace( /\{B/R\}/gi, '' ) // rakdos
+    //	.replace( /\{B/G\}/gi, '' ) // golgari
+    //	.replace( /\{U/B\}/gi, '' ) // dimir
+    //	.replace( /\{U/R\}/gi, '' ) // izzet
+    //	.replace( /\{R/G\}/gi, '' ) // gruul
+    //	.replace( /\{R/W\}/gi, '' ) // boros
+    //	.replace( /\{G/W\}/gi, '' ) // selesnya
+    //	.replace( /\{G/U\}/gi, '' ) // simic
+    //	.replace( /\{S\}/gi, '❄️' );
+
     return /*#__PURE__*/React.createElement("a", {
       href: card.lookup.related_uris.gatherer
     }, card.name, " ", /*#__PURE__*/React.createElement("span", {
       className: "mana-cost"
-    }, card.lookup.mana_cost));
+    }, manaCost));
   }
 
   return /*#__PURE__*/React.createElement("a", {
@@ -528,7 +569,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function DeckCard(_ref) {
   var card = _ref.card;
-  return /*#__PURE__*/React.createElement("li", null, card.quantity, "x ", /*#__PURE__*/React.createElement(_CardLink.default, {
+  return /*#__PURE__*/React.createElement("li", {
+    "data-lookup": JSON.stringify(card.lookup)
+  }, card.quantity, "x ", /*#__PURE__*/React.createElement(_CardLink.default, {
     card: card
   }));
 }
@@ -549,7 +592,6 @@ var _DeckCard = _interopRequireDefault(require("./DeckCard"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Fragment = wp.element.Fragment;
 var __ = wp.i18n.__;
 
 function whatTheType(type_line) {
@@ -614,16 +656,23 @@ function DeckList(_ref) {
     className: "mtg-deck-list"
   }, deck.Commander && /*#__PURE__*/React.createElement("div", {
     className: "mtg-deck-list_Commander"
-  }, /*#__PURE__*/React.createElement("h3", null, __('Commander:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
+  }, /*#__PURE__*/React.createElement("h3", null, __('Commander:', 'mtg-blocks')), /*#__PURE__*/React.createElement("div", {
+    className: "commander",
+    "data-lookup": JSON.stringify(deck.Commander.lookup)
+  }, /*#__PURE__*/React.createElement(_CardLink.default, {
     card: deck.Commander
-  })), deck.Companion && /*#__PURE__*/React.createElement("div", {
+  }))), deck.Companion && /*#__PURE__*/React.createElement("div", {
     className: "mtg-deck-list_Companion"
-  }, /*#__PURE__*/React.createElement("h3", null, __('Companion:', 'mtg-blocks')), /*#__PURE__*/React.createElement(_CardLink.default, {
+  }, /*#__PURE__*/React.createElement("h3", null, __('Companion:', 'mtg-blocks')), /*#__PURE__*/React.createElement("div", {
+    className: "companion",
+    "data-lookup": JSON.stringify(deck.Companion.lookup)
+  }, /*#__PURE__*/React.createElement(_CardLink.default, {
     card: deck.Companion
-  })), !!deck.Deck.length && /*#__PURE__*/React.createElement("div", {
+  }))), !!deck.Deck.length && /*#__PURE__*/React.createElement("div", {
     className: "mtg-deck-list_Deck"
   }, /*#__PURE__*/React.createElement("h3", null, __('Deck:', 'mtg-blocks')), clustered ? Object.entries(clustered).map(function (chunk) {
-    if (!chunk[1].length) return;
+    if (!chunk[1].length) return; // This is not ideal, as `chunk[0]` is technically a translated string.
+
     return /*#__PURE__*/React.createElement("div", {
       className: 'mtg-deck-list_Deck_' + chunk[0],
       key: chunk[0]

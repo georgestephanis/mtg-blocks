@@ -1,5 +1,41 @@
+.mtg-blocks_deck {
+  font-size: 1.5rem;
+}
 .mtg-blocks_deck pre {
   display: none;
+}
+.mtg-blocks_deck .mtg-deck-list {
+  font-size: 1em;
+  overflow: auto;
+}
+.mtg-blocks_deck .mtg-deck-list h3,
+.mtg-blocks_deck .mtg-deck-list h4 {
+  font-size: 1.1em;
+  margin: 0.5em 0 0;
+}
+.mtg-blocks_deck .mtg-deck-list ul {
+  list-style-type: none;
+}
+.mtg-blocks_deck .mtg-deck-list .mtg-deck-list_Deck {
+  float: left;
+  width: calc( 100% - 260px );
+  column-width: 240px;
+}
+.mtg-blocks_deck .mtg-deck-list .mtg-deck-list_Deck h3 {
+  column-span: all;
+}
+.mtg-blocks_deck .mtg-deck-list .mtg-deck-list_Deck > div {
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.mtg-blocks_deck .mtg-deck-list .mtg-deck-list_Deck > div h4 {
+  font-size: 1em;
+}
+.mtg-blocks_deck .mtg-deck-list .mtg-deck-list_Sideboard {
+  float: right;
+  width: 260px;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /*# sourceMappingURL=deck.css.map */

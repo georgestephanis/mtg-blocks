@@ -3,7 +3,7 @@ import CardLink from './CardLink';
 
 function DeckCard( { card } ) {
 	return (
-		<li>
+		<li data-lookup={ JSON.stringify( card.lookup ) }>
 			{ card.quantity }x <CardLink card={ card } />
 		</li>
 	);

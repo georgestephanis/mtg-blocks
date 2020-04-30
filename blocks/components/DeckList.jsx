@@ -1,9 +1,5 @@
 
 const {
-	Fragment
-} = wp.element;
-
-const {
 	__
 } = wp.i18n;
 
@@ -68,14 +64,18 @@ function DeckList( { deck } ) {
 			{ deck.Commander && (
 				<div className="mtg-deck-list_Commander">
 					<h3>{ __( 'Commander:', 'mtg-blocks' ) }</h3>
-					<CardLink card={ deck.Commander } />
+					<div className="commander" data-lookup={ JSON.stringify( deck.Commander.lookup ) }>
+						<CardLink card={ deck.Commander } />
+					</div>
 				</div>
 			) }
 
 			{ deck.Companion && (
 				<div className="mtg-deck-list_Companion">
 					<h3>{ __( 'Companion:', 'mtg-blocks' ) }</h3>
-					<CardLink card={ deck.Companion } />
+					<div className="companion" data-lookup={ JSON.stringify( deck.Companion.lookup ) }>
+						<CardLink card={ deck.Companion } />
+					</div>
 				</div>
 			) }
 
@@ -84,6 +84,7 @@ function DeckList( { deck } ) {
 					<h3>{ __( 'Deck:', 'mtg-blocks' ) }</h3>
 					{ clustered ? Object.entries( clustered ).map( function( chunk ) {
 						if ( ! chunk[1].length ) return;
+						// This is not ideal, as `chunk[0]` is technically a translated string.
 						return (
 							<div className={ 'mtg-deck-list_Deck_' + chunk[0] } key={ chunk[0] }>
 								<h4>{ chunk[0] }</h4>

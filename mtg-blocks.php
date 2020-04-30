@@ -22,7 +22,14 @@ function register_mtg_blocks() {
 	);
 
 	register_block_type( 'mtg-blocks/deck', array(
+		'render_callback' => 'mtg_blocks_dynamic_render_callback',
 		'editor_script' => 'mtg-blocks_deck',
 		'style' => 'mtg-blocks_deck',
 	) );
+}
+
+function mtg_blocks_dynamic_render_callback( $attributes, $content ) {
+	return "NO SOUP FOR YOU";
+	$content = str_replace( '{G}', '🟢', $content );
+	return $content;
 }
